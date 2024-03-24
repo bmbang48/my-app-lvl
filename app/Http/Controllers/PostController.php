@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -11,12 +12,12 @@ class PostController extends Controller
      */
     public function index()
     {
+        // jika storage tidak terbaca maka ubah filesystem.php
+        $posts = Storage::get('posts.txt');
+        $posts = explode("\n", $posts);
+        // ddd($posts);
         $view_data = [
-            'posts' => [
-                // Title    Content
-                ["Mengenal Laravel", "Ini adalah Blog tentang pengenalan laravel"],
-                ["Tentang Codepolitan", "Ini Blog tentang codepolitan"]
-            ]
+            'posts' => $posts
         ];
         return view('posts.index', $view_data);
     }
@@ -27,6 +28,7 @@ class PostController extends Controller
     public function create()
     {
         //
+        return view('posts.create');
     }
 
     /**
@@ -34,7 +36,26 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $title = $request->input('title');
+        $content = $request->input('content');
+
+        $posts = Storage::get('posts.txt');
+        $posts = explode("\n", $posts);
+
+        $new_post = [
+            count($posts) + 1,
+            $title,
+            $content,
+            date('Y-m-d H:i:s')
+        ];
+        $new_post = implode(',', $new_post);
+
+        array_push($posts, $new_post);
+        $posts = implode("\n", $posts);
+
+        Storage::write('posts.txt', $posts);
+
+        return redirect('posts');
     }
 
     /**
@@ -42,7 +63,19 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        echo "Halaman detail dari post. ID: $id";
+        $posts = Storage::get('posts.txt');
+        $posts = explode("\n", $posts);
+        $selected_post = array();
+        foreach ($posts as $post) {
+            $post = explode(",", $post);
+            if ($post[0] == $id) {
+                $selected_post = $post;
+            }
+        }
+        $view_data = [
+            'post' => $selected_post
+        ];
+        return view('posts.show', $view_data);
     }
 
     /**

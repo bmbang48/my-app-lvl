@@ -22,12 +22,17 @@
 <body>
 
     <div class="container">
-        <h1>Blog Nih</h1>
+        <h1>Blog Nih <a href="{{url('posts/create')}}" class="btn btn-success">Buat Postingan</a> </h1>
         @php($number=1)
         @foreach($posts as $post)
-        <div class="blog">
-            <h3>{{ $post[0] }} <small>#{{$number}}</small></h3>
-            <p>{{ $post[1] }}</p>
+        @php($post = explode(",",$post))
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{$post[1]}}</h5>
+                <p class="card-text">{{$post[2]}}</p>
+                <p class="card-text"><small class="text-muted">Last Update {{date('d M Y H:i', strtotime($post[3]))}}</small></p>
+                <a href="{{ url("posts/$post[0]") }}" class="btn btn-primary">Selengkapnya</a>
+            </div>
         </div>
         @php($number++)
         @endforeach
