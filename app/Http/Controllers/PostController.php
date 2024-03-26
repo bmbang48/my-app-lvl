@@ -110,4 +110,14 @@ class PostController extends Controller
 
         return redirect('posts');
     }
+    public function api()
+    {
+        $dataPosts = Post::get();
+
+        return response()->json()([
+            'status' => true,
+            'message' => 'Data Postingan ditemukan',
+            'data' => $dataPosts
+        ], 200);
+    }
 }
