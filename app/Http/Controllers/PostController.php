@@ -62,7 +62,7 @@ class PostController extends Controller
             'updated_at' => date('Y-m-d H:i:s')
         ]);
 
-        \Mail::to('admin@codepolitan.com')->send(new BlogPosted());
+        Mail::to('admin@codepolitan.com')->send(new BlogPosted());
 
         return redirect('posts');
     }
