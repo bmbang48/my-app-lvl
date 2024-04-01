@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BlogPosted;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,6 +18,10 @@ class PostController extends Controller
      */
     public function index()
     {
+        //cek user login
+        if (!Auth::check()) {
+            return redirect('login');
+        }
         // jika storage tidak terbaca maka ubah filesystem.php
         $posts = Post::active()->get();
         $view_data = [
@@ -28,6 +36,10 @@ class PostController extends Controller
     public function create()
     {
         //
+        //cek user login
+        if (!Auth::check()) {
+            return redirect('login');
+        }
         return view('posts.create');
     }
 
@@ -36,6 +48,10 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        //cek user login
+        if (!Auth::check()) {
+            return redirect('login');
+        }
         $title = $request->input('title');
         $content = $request->input('content');
 
@@ -46,6 +62,8 @@ class PostController extends Controller
             'updated_at' => date('Y-m-d H:i:s')
         ]);
 
+        \Mail::to('admin@codepolitan.com')->send(new BlogPosted());
+
         return redirect('posts');
     }
 
@@ -54,6 +72,10 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
+        //cek user login
+        if (!Auth::check()) {
+            return redirect('login');
+        }
         // SELECT ... FROM posts WHERE id = $id
         $post = Post::where('id', '=', $id)
             ->first(); // mendapatkan singel data pertama 
@@ -72,6 +94,10 @@ class PostController extends Controller
      */
     public function edit(string $id)
     {
+        //cek user login
+        if (!Auth::check()) {
+            return redirect('login');
+        }
         $post = Post::where('id', '=', $id)
             ->first();
         $view_data = [
@@ -85,6 +111,10 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        //cek user login
+        if (!Auth::check()) {
+            return redirect('login');
+        }
         $title = $request->input('title');
         $content = $request->input('content');
 
@@ -105,6 +135,10 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
+        //cek user login
+        if (!Auth::check()) {
+            return redirect('login');
+        }
         Post::where('id', $id)
             ->delete();
 
